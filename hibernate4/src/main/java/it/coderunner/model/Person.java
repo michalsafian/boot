@@ -15,9 +15,11 @@ public class Person {
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
-
+	
+	@Column(name = "Imie")
 	private String name;
-
+	
+	@Column(name = "panstwo")
 	private String country;
 
 	public int getId() {

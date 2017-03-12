@@ -6,37 +6,57 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
+
+
+
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="it.coderunner.*" />
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
 				<prop key="hibernate.current_session_context_class">thread</prop>
 				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop> <!-- create(jesli tabela nie istnieje to stworz ja, jesli istnieje to wywali błąd) update(bedzie updatował istniejaca) -->
 			</props>
 		</property>
 	</bean>
+	
 
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
-		<property name="driverClassName" value="org.h2.Driver" />
-		<property name="url" value="jdbc:h2:~/wwsis" />
-		<property name="username" value="test" />
-		<property name="password" value="test" />
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/orm_database" />
+		<property name="username" value="root" />
+		<property name="password" value="433041" />
 	</bean>
+
+<!--packagesToScan - pakiety ktore beda brane pod uwage (mozna dodac kilka po przecinku)
+	dataSource - to co robione było przez Connect conn (metoda setDBconnection())  -->
+
+
+
 
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-
+	</bean> <!-- dopoki baza danych nie zwroci "success" to wszystko wroci do stanu ze startu(rollback)  -->
+			<!-- tranzakcyjnosc bazy danych - dopoki transakcja sie nie zakonczy  -->
+			<!-- zawsze dla session factory!!!!! -->
+			
+			
 	<bean id="persistenceExceptionTranslationPostProcessor"
 		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+		<!-- po to aby ułatwiac czytanie logow o błędach -->
+		
 
 	<bean id="personDAO" class="it.coderunner.dao.impl.PersonDAOImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
+	
+	<bean id="carsDAO" class="it.coderunner.dao.impl.CarsDAOImpl">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<!-- wyszukuje beana do uruchomienia -->
 </beans>
